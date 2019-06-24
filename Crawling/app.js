@@ -56,7 +56,7 @@ nightmare
 		  data.push(book);
 	  });  
 	  /*Iterating through the links array using reduce allows the scraper
-	  to sequentially open a new nightmare tab instead of asynchronously. This 
+	  open a new nightmare tab in series instead of asynchronously. This 
 	  lowers CPU requirements by not opening 20 headless browsers at once*/ 
 	  links.reduce(function(accumulator, link) {
 		  return accumulator.then(function(results) {

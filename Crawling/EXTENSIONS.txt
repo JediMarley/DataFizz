@@ -1,10 +1,12 @@
 Extensions
+
 1) This application has many core functions of web scraping completed and could easily be extended to support
 other domains. To start we would need to walkthrough the process the headless browser will go through and write 
 down the steps. Taking note of the selectors for each element you interact with, this will give you the workflow 
 you'll need for the app. Then you're going to update the selectors and browser steps in the code. If the new 
 domain is similar to online shopping then all you need to update is a few selectors and the product 
 objects and maybe a few browser steps but most of these are the same from amazon.
+
 2) For handling products besides books, this app is designed to be flexible and easily updated to use these
 other categorys. Since the book list pages use the same div as other categorys selecting the elements and 
 getting universal product properties such as Name, Price and sourceURL all behave the same. The only two parts
