@@ -1,10 +1,12 @@
 //Headless web browser
 var Nightmare = require('nightmare');
-nightmare = Nightmare({ show: true });
+nightmare = Nightmare();
 //Pretty much core jQuery for the server
 const cheerio = require('cheerio');
 //Library for formatting strings with HTML tags
 var striptags = require('striptags');
+//For writing final data to a file
+const fs = require('fs');
 var i = 0;
 // Book category amazon link
 const url = 'https://www.amazon.com/gp/browse.html?node=283155&ref_=nav_em_T1_0_4_26_1__bo_t3';
@@ -18,7 +20,6 @@ nightmare
   //Click on amazon free shipping to filter only physical books
   .check('#leftNav > ul:nth-child(21) > div > li > span > span > div > label > input[type=checkbox]')
   .wait('body')
-  .wait(5000)
   //Get page html
   .evaluate(() => document.querySelector('body').innerHTML)
   //Close headless browser
@@ -97,7 +98,18 @@ nightmare
 		  	});
 		//When all product specific nightmare instances are finished return the data array in JSON
 		}, Promise.resolve([])).then(function(results){
-		    console.log(JSON.stringify(data));
+			var today = new Date();
+			var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+			var time = today.getHours() + "-" + today.getMinutes() + "-" + today.getSeconds();
+			var dateTime = date+' '+time;
+			var fileName = dateTime+' '+'data.json';
+		    fs.appendFile(fileName, JSON.stringify(data), (err) => {  
+		        // throws an error, you could also catch it here
+		        if (err) throw err;
+
+		        // success case, the file was saved
+		        console.log('Data saved!');
+		    });
 		});
   }).catch(err => {
     console.log(err);
@@ -132,7 +144,9 @@ let getProductPageData = (html, product) => {
 		return product;
 	}
   
-}	
+}
+//If I had a job at DataFiniti I would break these classes into multiple files for better scalability
+//////////////////////////// PRODUCT
 //Default product class, all amazon products need an id, name, sourceURL and price
 class Product {
 	constructor(id) {
@@ -142,6 +156,8 @@ class Product {
 		this.listPrice;
 	}
 }
+//////////////////////////// END PRODUCT
+//////////////////////////// PRODUCT SELECTORS
 //Default product selectors, this allows these selectors to be kept in one place since they don't vary across category
 class ProductSelectors {
 	constructor(){
@@ -150,6 +166,8 @@ class ProductSelectors {
 		this.priceSelect = 'div.sg-col-4-of-12.sg-col-8-of-16.sg-col-16-of-24.sg-col-12-of-20.sg-col-24-of-32.sg-col.sg-col-28-of-36.sg-col-20-of-28 > div > div:nth-child(2) > div:nth-child(1) > div > div.a-section.a-spacing-none.a-spacing-top-small > div:nth-child(2) > div > a > span.a-price.a-text-price > span.a-offscreen';
 	}
 }
+//////////////////////////// END PRODUCT SELECTORS
+//////////////////////////// BOOK
 //Book class which takes the properties from the Product class and adds more specific properties to books
 class Book extends Product {
 	constructor(){
@@ -160,6 +178,8 @@ class Book extends Product {
 		this.imageURLs;
 	}
 }
+//////////////////////////// END BOOK
+
 //Replaces HTML entities from text
 function decodeHTMLEntities(text) {
 	//An array of entities to replace
